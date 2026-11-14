@@ -1,3 +1,4 @@
+
 name: Build Debug APK
 
 on:
@@ -56,11 +57,10 @@ jobs:
           java-version: '17'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK 35
-        run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+        uses: android-actions/setup-android@v4
+        with:
+          accept-android-sdk-licenses: 'true'
+          log-accepted-android-sdk-licenses: 'false'
 
       - name: Make Gradle executable
         working-directory: ${{ env.PROJECT_DIR }}
@@ -68,7 +68,8 @@ jobs:
 
       - name: Build Debug APK
         working-directory: ${{ env.PROJECT_DIR }}
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          ./gradlew --no-daemon assembleDebug --stacktrace
 
       - name: Find APK
         run: |
@@ -80,5 +81,5 @@ jobs:
         with:
           name: Material-Icons-Debug-APK
           path: |
-            ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+            ${{ env.PROJECT_DIR }}/**/build/outputs/apk/debug/*.apk
           if-no-files-found: error
